@@ -1,0 +1,23 @@
+splitting - divisão em blocos de memórias.
+
+coalescing - se o próximo bloco de memória estiver livre, junta os dois. Olhar só o próximo no trabalho, não o anterior.
+
+boundary tags - tags que delimitam o início de um novo bloco de memória, função free torna o valor de ocupado ou não da tag como 1, função malloc torna o valor 0. além do valor que diz se o bloco está ocupado, a tag possui a informação de quanto de espaço tem naquele bloco.
+
+bins - agrupar blocos de acordo com seus tamanhos. Faciilita a busca de um bloco em um grupo menor de blocos. Não precisa implementar isso no trabalho. No trabalho, será utilizado FIRST FIT, o primeiro bloco onde a quantuidade de memória couber, se coloca ali dentro.
+
+
+Solicitar a área incial de memória do trabalho de duas formas: usando o próprio malloc ou chamando direto a chamada de sistema sbrk.
+
+struct mem_block representa a tag citada em boundary tags.
+
+Primeira coisa é colocar a tag no início da área de memória incial. Definir valor is_free como 1 (livre). Cada tag tem 16 bytes (sizeof(mem_block)), se alocar 255 no bloco de memória, será utilizado mais esses 16 bytes para a tag.
+
+
+---------------------------------------------- 2
+
+Um arquivo é um vetor de bytes, juntar dois arquivos é concatenar dois vetores.
+
+Recuperar um arquivo, fazer uma cópia do bloco de memória com o conteúdo do arquivo em um novo arquivo do disco.
+
+Listar os arquivos: pular de cabeçalho em cabeçalho e mostra os nomes. 
