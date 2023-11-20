@@ -104,19 +104,40 @@ void listFiles(const char *archivePath) {
     fclose(archive);
 }
 
-int main() {
-    const char *filePaths[] = {"file1.txt", "file2.txt", "file3.txt"};
-    const char *archivePath = "archive.bin";
+int main(int argc, char **argv) {
+    // Verifique se temos os argumentos mínimos necessários
+    if (argc < 2) {
+        printf("Uso:\n");
+        printf("\t%s -c <arquivo_de_saida> <arquivo1> <arquivo2> ... <arquivoN> - Cria arquivo.\n", argv[0]);
+        printf("\t%s -l <nome_arquivador> - Lista arquivos.\n", argv[0]);
+        printf("\t%s -e <nome_arquivador> <arquivo> - Extrai conteúdo.\n", argv[0]);
+        return 1;
+    }
 
-    int numFiles = sizeof(filePaths) / sizeof(filePaths[0]);
+    // O primeiro argumento é o arquivo de saída ou opção de listagem -l
+    char *opt = argv[1];
 
-    archiveFile(filePaths, numFiles, archivePath);
+    // Listar arquivos
+    if (strcmp(opt, "-l") == 0) {
+        listFiles(argv[2]);
+        return 0;
+    }
 
-    recoverFile(archivePath, "file1.txt");
-    recoverFile(archivePath, "file2.txt");
-    recoverFile(archivePath, "file3.txt");
+    // Criar arquivo. 
+    if (strcmp(opt, "-c") == 0){
+        char *output_file = argv[2];
+        char **input_files = &argv[3];
+        int num_input_files = argc - 3;
 
-    listFiles(archivePath);
+        archiveFile(input_files, num_input_files, output_file);
+    }
+
+    // Extrair arquivo. 
+    if (strcmp(opt, "-e") == 0){
+        char *archive_file = argv[2];
+        char *extract_file = argv[3];
+        recoverFile(archive_file, extract_file);
+    }
 
     return 0;
 }
