@@ -21,13 +21,18 @@ void* smalloc(size_t size) {
         head = (struct mem_block *)memory;
         head->is_free = 1;
         head->size = MEMORY_SIZE - sizeof(struct mem_block);
-        head->mem_ptr = head + 1;
+        // head->mem_ptr = head + 1;
+        head->mem_ptr = head + sizeof(struct mem_block);
         head->next = NULL;
     }
 
     struct mem_block* curr = head;
 
     while (curr) {
+        // if (curr->is_free && curr->next && curr->next->is_free) {
+        //     curr->next = curr->next->next;
+        //     curr->size = curr->size + sizeof(struct mem_block) + curr->next->size;
+        // }
         if (curr->is_free && curr->size >= size) {
             if (curr->size > size + sizeof(struct mem_block)) {
                 // Split the block
@@ -49,19 +54,39 @@ void* smalloc(size_t size) {
     return NULL;
 }
 
+// void sfree(void* ptr) {
+//     struct mem_block* curr = head;
+//     while (curr) {
+//         if (curr->is_free && curr->next && curr->next->is_free) {
+//             curr->size = curr->size + sizeof(struct mem_block) + curr->next->size;
+//             curr->next = curr->next->next;
+//         }
+//         if (curr->mem_ptr == ptr) {
+//             curr->is_free = 1;
+//             // Coalesce adjacent free blocks
+//             if (curr->next && curr->next->is_free) {
+//                 curr->size += sizeof(struct mem_block) + curr->next->size;
+//                 curr->next = curr->next->next;
+//             }
+//             // if (curr->next && curr->next->next && curr->next->next->is_free) {
+//             //     curr->next->size += sizeof(struct mem_block) + curr->next->next->size;
+//             //     curr->next = curr->next->next->next;
+//             // }
+//             break;
+//         }
+//         curr = curr->next;
+//     }
+// }
+
 void sfree(void* ptr) {
     struct mem_block* curr = head;
     while (curr) {
         if (curr->mem_ptr == ptr) {
             curr->is_free = 1;
             // Coalesce adjacent free blocks
-            if (curr->next && curr->next->is_free) {
+            while (curr->next && curr->next->is_free) {
                 curr->size += sizeof(struct mem_block) + curr->next->size;
                 curr->next = curr->next->next;
-            }
-            if (curr->next && curr->next->next && curr->next->next->is_free) {
-                curr->next->size += sizeof(struct mem_block) + curr->next->next->size;
-                curr->next = curr->next->next->next;
             }
             break;
         }
@@ -80,14 +105,18 @@ int main() {
     // Simulating memory allocation and deallocation
     void* ptr1 = smalloc(200);  // Allocate 200 bytes
     void* ptr2 = smalloc(300);  // Allocate 300 bytes
-    sfree(ptr1);  // Free the first block
-    void* ptr3 = smalloc(150);  // Allocate 150 bytes (should reuse the freed block)
-    sfree(ptr2);  // Free the second block
-    void* ptr4 = smalloc(500);  // Allocate 500 bytes (should coalesce with the freed block)
+    void* ptr3 = smalloc(167);  // Allocate 200 bytes
+    void* ptr4 = smalloc(5);
+    // sfree(ptr4);
+    void* ptr5 = smalloc(213);  // Allocate 300 bytes
+    // sfree(ptr1);  // Free the first block
+    // void* ptr3 = smalloc(150);  // Allocate 150 bytes (should reuse the freed block)
+    // sfree(ptr2);  // Free the second block
+    // void* ptr4 = smalloc(500);  // Allocate 500 bytes (should coalesce with the freed block)
 
     // Display the results
-    printf("Memory allocated at: %p\n", ptr3);
-    printf("Memory allocated at: %p\n", ptr4);
+    // printf("Memory allocated at: %p\n", ptr3);
+    // printf("Memory allocated at: %p\n", ptr4);
 
     // Deallocate the memory block using sbrk
     if (brk(memory) == -1) {
