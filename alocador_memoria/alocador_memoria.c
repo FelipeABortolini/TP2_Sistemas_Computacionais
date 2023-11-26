@@ -105,18 +105,14 @@ int main() {
     // Simulating memory allocation and deallocation
     void* ptr1 = smalloc(200);  // Allocate 200 bytes
     void* ptr2 = smalloc(300);  // Allocate 300 bytes
-    void* ptr3 = smalloc(167);  // Allocate 200 bytes
-    void* ptr4 = smalloc(5);
+    // void* ptr3 = smalloc(167);  // Allocate 200 bytes
+    // void* ptr4 = smalloc(5);
     // sfree(ptr4);
-    void* ptr5 = smalloc(213);  // Allocate 300 bytes
-    // sfree(ptr1);  // Free the first block
-    // void* ptr3 = smalloc(150);  // Allocate 150 bytes (should reuse the freed block)
-    // sfree(ptr2);  // Free the second block
-    // void* ptr4 = smalloc(500);  // Allocate 500 bytes (should coalesce with the freed block)
-
-    // Display the results
-    // printf("Memory allocated at: %p\n", ptr3);
-    // printf("Memory allocated at: %p\n", ptr4);
+    // void* ptr5 = smalloc(213);  // Allocate 300 bytes
+    sfree(ptr1);  // Free the first block
+    void* ptr3 = smalloc(150);  // Allocate 150 bytes (should reuse the freed block)
+    sfree(ptr2);  // Free the second block
+    void* ptr4 = smalloc(500);  // Allocate 500 bytes (should coalesce with the freed block)
 
     // Deallocate the memory block using sbrk
     if (brk(memory) == -1) {
