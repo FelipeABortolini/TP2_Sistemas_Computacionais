@@ -21,11 +21,12 @@ struct mem_block {
 
 struct mem_block* head = NULL;  // Head of the linked list
 int memory_size = NULL;
+char* memory = NULL;  // Pointer to the memory block
 
 void* smalloc(size_t size) {
 
     if (!head) {
-        head = (struct mem_block *)allocations;
+        head = (struct mem_block *)memory;
         head->is_free = 1;
         head->size = memory_size - sizeof(struct mem_block);
         // head->mem_ptr = head + 1;
@@ -87,6 +88,14 @@ int main(int argc, char *argv[]) {
 
     maxMemory = atoi(argv[1]);
     memory_size = maxMemory;
+
+    memory = sbrk(memory_size);
+    if (memory == (void*)-1) {
+        perror("sbrk");
+        return 1;  // Error allocating memory
+    }
+
+    allocations[allocCount].ptr = memory;
 
     // allocations[allocCount].ptr = sbrk(memory_size);
 
